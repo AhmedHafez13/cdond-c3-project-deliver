@@ -91,7 +91,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      - run:ci
+      - run:
           name: Back-end test
           working_directory: ./backend
           command: |
