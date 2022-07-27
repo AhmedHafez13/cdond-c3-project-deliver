@@ -35,6 +35,16 @@ commands:
               npm run migration:revert
             fi
 
+  install_awscli:
+    description: Install AWS CLI
+    steps:
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
 jobs:
   build-frontend:
     docker:
@@ -196,6 +206,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - install_awscli
       - run:
           name: Run migrations
           command: |
@@ -207,7 +218,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
