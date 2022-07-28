@@ -387,7 +387,7 @@ jobs:
       - checkout
       - install_awscli
       - run:
-          name: Get old stack workflow id
+          name: Remove old stacks and files
           command: |
             export STACKS=($(aws cloudformation list-stacks \
               --query "StackSummaries[*].StackName" \
@@ -396,10 +396,8 @@ jobs:
             
             echo Stack names: "${STACKS[@]}"
             echo Old WorkflowID: $OldWorkflowID
-      - run:
-          name: Remove old stacks and files
-          command: |
             echo "Old bucket: s3://udapeople-${OldWorkflowID}"
+
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
               echo "----- ----- ----- * Delete Confirmed * ----- ----- -----"
